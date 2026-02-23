@@ -1,0 +1,16 @@
+estadounidence(west).
+hostil(corea_del_sur).
+tiene(corea_del_sur, m1).
+misil(m1).
+
+
+arma(X) :-
+  misil(X).
+vendio(west, X, corea_del_sur) :-
+    misil(X),
+    tiene(corea_del_sur, X).
+criminal(X) :-
+    estadounidence(X),
+    arma(Y),
+    vendio(X, Y, Z),
+    hostil(Z).
