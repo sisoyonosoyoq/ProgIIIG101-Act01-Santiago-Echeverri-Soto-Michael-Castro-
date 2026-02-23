@@ -1,0 +1,81 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+De acuerdo a la siguiente imagen de árbol genealógico, construya una lógica de
+predicados donde las relaciones directas se generen por hechos y las relacion de
+mas de una generación se obtengan mediante reglas.Ejemplo: padre(homero,bart) el
+anterior es un hecho y corresponde a una relación directa, mientras que
+abuelo(X,bart) puede ser una consulta hecha al programa, donde la relación abuelo
+(que es de más de 1 generación) debe ser obtenida por reglas, no por hechos.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Contexto: Lenguaje de programación Prolog
+
+%% Hechos: X es padre de Y
+
+padre(abraham_simpson, homero_simpson).
+padre(abraham_simpson, herbert_powell).
+padre(clancy_bouvier, patty_bouvier).
+padre(clancy_bouvier, selma_bouvier).
+padre(clancy_bouvier, marge_simpson).
+padre(homero_simpson, bart_simpson).
+padre(homero_simpson, lisa_simpson).
+padre(homero_simpson, maggie_simpson).
+
+%% Hechos: X es madre de Y
+
+madre(mona_simpson, homero_simpson).
+madre(mona_simpson, herbert_powell).
+madre(jacqueline_simpson, marge_simpson).
+madre(jacqueline_simpson, patty_bouvier).
+madre(jacqueline_simpson, selma_bouvier).
+madre(marge_simpson, bart_simpson).
+madre(marge_simpson, lisa_simpson).
+madre(marge_simpson, maggie_simpson).
+madre(selma_bouvier, ling_bouvier).
+
+
+%% Regla auxiliar
+
+progenitor(X,Y) :- padre(X,Y).
+progenitor(X,Y) :- madre(X,Y).
+
+
+%% Regla es_abuelo_a_de: X es abuelo de Y si existe un Z tal que, X sea padre de Z y Z sea padre de Y
+
+es_un_abuelo_a_de(Abuelo, Nieto) :- progenitor(Abuelo, Padre), 
+                                    progenitor(Padre, Nieto).
+
+%% Regla es_nieto_a_de: X es nieto de Y si exite un Z tal que, Z sea padre de X y Y sea padre de Z
+
+es_un_nieto_a_de(Nieto, Abuelo) :- progenitor(Padre, Nieto), 
+                                   progenitor(Abuelo, Padre).
+
+%% Regla es_hermano_de: X es hermano/a de Y, si existe un Z tal que, Z sea padre de X o Z sea madre de X y
+%% Z sea padre de Y o Z sea madre de Y
+
+es_hermano_a_de(Hermano1,Hermano2) :- Hermano1 \= Hermano2, 
+                                      progenitor(Z,Hermano1),  
+                                      progenitor(Z,Hermano2).
+
+%% Regla es_tio_de: X es tio de Y si existe un K tal que, K sea padre/madre de Y y K sea hermano/a de de X  
+
+es_tio_a_de(Tio, Sobrino) :- progenitor(K,Sobrino), 
+                             es_hermano_a_de(Tio,K).
+
+
+%% Regla es_primo_a_de: X es primoo/a de Y, si existe una U y una T tal que, U sea hermano/a de T y 
+%% U sea padre/madre de X y T sea padre/madre de Y 
+
+es_primo_a_de(Primo1,Primo2) :- Primo1 \= Primo2,
+                                es_hermano_a_de(Padre1,Padre2), 
+                                progenitor(Padre1,Primo1),  
+                                progenitor(Padre2,Primo2).
+
+%% Consultas
+
+
+
+
+
+
+
+
+
